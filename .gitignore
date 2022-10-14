@@ -3,6 +3,7 @@ annotations/
 results/
 external/
 .DS_Store
+.idea/
 
 MatlabAPI/analyze*/
 MatlabAPI/visualize*/
