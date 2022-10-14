@@ -302,6 +302,57 @@ class COCO:
             for ann in anns:
                 print(ann['caption'])
 
+    def polygon_extract(self, anns, draw_bbox=False):
+        """
+        Modified from showAnns to extract a polygon from given figure
+        :param anns (array of object): annotations to display
+        :return: None
+        """
+        if len(anns) == 0:
+            return 0
+        if 'segmentation' in anns[0]:
+            datasetType = 'instances'
+        else:
+            raise Exception('datasetType not supported or not in version of segmentation')
+        if datasetType == 'instances':
+            ax = plt.gca()
+            ax.set_autoscale_on(False)
+            polygons = []
+            color = []
+            for ann in anns:
+                c = (np.random.random((1, 3))*0.6+0.4).tolist()[0]
+                if 'segmentation' in ann:
+                    if type(ann['segmentation']) == list:
+                        # polygon
+                        for seg in ann['segmentation']:
+                            poly = np.array(seg).reshape((int(len(seg)/2), 2))
+                            polygons.append(Polygon(poly))
+                            color.append(c)
+                    else:
+                        # mask
+                        raise Exception('target object is not a polygon')
+                if 'keypoints' in ann and type(ann['keypoints']) == list:
+                    raise Exception('keypoints method not supported')
+
+                if draw_bbox:
+                    [bbox_x, bbox_y, bbox_w, bbox_h] = ann['bbox']
+                    poly = [[bbox_x, bbox_y], [bbox_x, bbox_y+bbox_h], [bbox_x+bbox_w, bbox_y+bbox_h], [bbox_x+bbox_w, bbox_y]]
+                    np_poly = np.array(poly).reshape((4,2))
+                    polygons.append(Polygon(np_poly))
+                    color.append(c)
+            plt.savefig('../figs_demo/phase1.png')
+            print(polygons[0])
+            print(polygons[1])
+            p = PatchCollection(polygons, facecolor=color, linewidths=0, alpha=0.4)
+            ax.add_collection(p)
+            plt.savefig('../figs_demo/phase2.png')
+            p = PatchCollection(polygons, facecolor='none', edgecolors=color, linewidths=2)
+            ax.add_collection(p)
+            plt.savefig('../figs_demo/phase3.png')
+        elif datasetType == 'captions':
+            for ann in anns:
+                print(ann['caption'])
+
     def loadRes(self, resFile):
         """
         Load result file and return a result api object.
