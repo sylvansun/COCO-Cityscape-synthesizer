@@ -3,8 +3,8 @@ import numpy as np
 import skimage.io as io
 import matplotlib.pyplot as plt
 import pylab
-pylab.rcParams['figure.figsize'] = (8.0, 10.0)
 
+pylab.rcParams['figure.figsize'] = (8.0, 10.0)
 
 dataDir = '..'
 dataType = 'val2017'
@@ -35,20 +35,20 @@ print(imgIds)
 img = coco.loadImgs(imgIds[np.random.randint(0, len(imgIds))])[0]
 
 # load and display image
-# I = io.imread('%s/images/%s/%s'%(dataDir,dataType,img['file_name']))
+# image = io.imread('%s/images/%s/%s'%(dataDir,dataType,img['file_name']))
 # use url to load image
-I = io.imread(img['coco_url'])
-# plt.axis('off')
-plt.imshow(I)
-plt.savefig('./demo.png')
-plt.show()
-
+image = io.imread(img['coco_url'])
+print("skimage.io.imread datatype: ", type(image))
+print(image.shape)
+plt.imshow(image)
+plt.savefig('./demo_original.png')
 
 # load and display instance annotations
-# annIds = coco.getAnnIds(imgIds=img['id'], catIds=catIds, iscrowd=None)
-# anns = coco.loadAnns(annIds)
-# print(type(anns))
-# print(len(anns))
+plt.imshow(image)
+annIds = coco.getAnnIds(imgIds=img['id'], catIds=catIds, iscrowd=None)
+anns = coco.loadAnns(annIds)
+print(type(anns))
+print(len(anns))
 # for elem in anns:
 #     print(type(elem))
 #     print(elem.keys())
@@ -57,5 +57,6 @@ plt.show()
 #     print('image: ', elem['image_id'])
 #     print(elem['bbox'])
 #     print(elem['id'])
-# coco.showAnns(anns)
-
+coco.showAnns(anns)
+plt.savefig('./demo_semantic')
+# plt.show()
