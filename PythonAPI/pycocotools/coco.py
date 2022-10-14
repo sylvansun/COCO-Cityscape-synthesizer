@@ -57,6 +57,7 @@ import os
 from collections import defaultdict
 import sys
 PYTHON_VERSION = sys.version_info[0]
+from PIL import Image, ImageDraw
 if PYTHON_VERSION == 2:
     from urllib import urlretrieve
 elif PYTHON_VERSION == 3:
@@ -302,10 +303,10 @@ class COCO:
             for ann in anns:
                 print(ann['caption'])
 
-    def polygon_extract(self, anns, draw_bbox=False):
+    def polygon_extract(self, anns, height, width, draw_bbox=False):
         """
         Modified from showAnns to extract a polygon from given figure
-        :param anns (array of object): annotations to display
+        :param anns (array of object): annotations to display, h: height of image, w: width of image
         :return: None
         """
         if len(anns) == 0:
@@ -319,6 +320,8 @@ class COCO:
             ax.set_autoscale_on(False)
             polygons = []
             color = []
+            mask = np.zeros([height, width])
+            print(np.sum(mask))
             for ann in anns:
                 c = (np.random.random((1, 3))*0.6+0.4).tolist()[0]
                 if 'segmentation' in ann:
@@ -326,6 +329,11 @@ class COCO:
                         # polygon
                         for seg in ann['segmentation']:
                             poly = np.array(seg).reshape((int(len(seg)/2), 2))
+                            bg = Image.new('L', (width, height), 0)
+                            ImageDraw.Draw(bg).polygon(seg, outline=1, fill=1)
+                            mask_tmp = np.array(bg)
+                            mask += mask_tmp
+                            print(np.sum(mask))
                             polygons.append(Polygon(poly))
                             color.append(c)
                     else:
@@ -340,6 +348,9 @@ class COCO:
                     np_poly = np.array(poly).reshape((4,2))
                     polygons.append(Polygon(np_poly))
                     color.append(c)
+            mask = np.clip(mask, 0, 1)
+            print(mask.shape)
+            print(np.sum(mask))
             plt.savefig('../figs_demo/phase1.png')
             print(polygons[0])
             print(polygons[1])
@@ -349,6 +360,7 @@ class COCO:
             p = PatchCollection(polygons, facecolor='none', edgecolors=color, linewidths=2)
             ax.add_collection(p)
             plt.savefig('../figs_demo/phase3.png')
+            return mask.astype('uint8')
         elif datasetType == 'captions':
             for ann in anns:
                 print(ann['caption'])
