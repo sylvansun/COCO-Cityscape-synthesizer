@@ -39,9 +39,9 @@ img = coco.loadImgs(imgIds[np.random.randint(0, len(imgIds))])[0]
 # use url to load image
 image = io.imread(img['coco_url'])
 print("skimage.io.imread datatype: ", type(image))
-print(image.shape)
+print(image.shape[0])
 plt.imshow(image)
-plt.savefig('./demo_original.png')
+plt.savefig('../figs_demo/basie_original.png')
 
 # load and display instance annotations
 plt.imshow(image)
@@ -57,6 +57,11 @@ print(len(anns))
 #     print('image: ', elem['image_id'])
 #     print(elem['bbox'])
 #     print(elem['id'])
-coco.showAnns(anns)
-plt.savefig('./demo_semantic')
+mask = coco.polygon_extract(anns, image.shape[0], image.shape[1])
+plt.savefig('../figs_demo/basic_semantic.png')
 # plt.show()
+
+print(np.sum(mask))
+# img_extracted = image * mask
+plt.imshow(mask)
+plt.savefig('../figs_demo/basic_masked.png')
