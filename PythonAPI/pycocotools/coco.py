@@ -321,7 +321,7 @@ class COCO:
             polygons = []
             color = []
             mask = np.zeros([height, width])
-            print(np.sum(mask))
+            # print(np.sum(mask))
             for ann in anns:
                 c = (np.random.random((1, 3))*0.6+0.4).tolist()[0]
                 if 'segmentation' in ann:
@@ -333,7 +333,7 @@ class COCO:
                             ImageDraw.Draw(bg).polygon(seg, outline=1, fill=1)
                             mask_tmp = np.array(bg)
                             mask += mask_tmp
-                            print(np.sum(mask))
+                            # print(np.sum(mask))
                             polygons.append(Polygon(poly))
                             color.append(c)
                     else:
@@ -349,11 +349,7 @@ class COCO:
                     polygons.append(Polygon(np_poly))
                     color.append(c)
             mask = np.clip(mask, 0, 1)
-            print(mask.shape)
-            print(np.sum(mask))
             # plt.savefig('../figs_demo/phase1.png')
-            print(polygons[0])
-            print(polygons[1])
             p = PatchCollection(polygons, facecolor=color, linewidths=0, alpha=0.4)
             ax.add_collection(p)
             # plt.savefig('../figs_demo/phase2.png')
