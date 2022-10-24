@@ -351,15 +351,15 @@ class COCO:
             mask = np.clip(mask, 0, 1)
             print(mask.shape)
             print(np.sum(mask))
-            plt.savefig('../figs_demo/phase1.png')
+            # plt.savefig('../figs_demo/phase1.png')
             print(polygons[0])
             print(polygons[1])
             p = PatchCollection(polygons, facecolor=color, linewidths=0, alpha=0.4)
             ax.add_collection(p)
-            plt.savefig('../figs_demo/phase2.png')
+            # plt.savefig('../figs_demo/phase2.png')
             p = PatchCollection(polygons, facecolor='none', edgecolors=color, linewidths=2)
             ax.add_collection(p)
-            plt.savefig('../figs_demo/phase3.png')
+            # plt.savefig('../figs_demo/phase3.png')
             return mask.astype('uint8')
         elif datasetType == 'captions':
             for ann in anns:
