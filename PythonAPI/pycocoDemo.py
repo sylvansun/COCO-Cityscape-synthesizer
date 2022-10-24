@@ -27,12 +27,12 @@ nms = set([cat['supercategory'] for cat in cats])
 print('COCO super categories: \n{}'.format(' '.join(nms)))
 
 # get all images containing given categories, select one at random
-catIds = coco.getCatIds(catNms=['person', 'dog', 'skateboard'])
-print(catIds)
+catIds = coco.getCatIds(catNms=['dog'])
+print('catIDS:', catIds)
 imgIds = coco.getImgIds(catIds=catIds)
-print(imgIds)
+print('imgIDS:', imgIds)
 imgIds = coco.getImgIds(imgIds=[549220])
-print(imgIds)
+print('imgIDS:', imgIds)
 img = coco.loadImgs(imgIds[np.random.randint(0, len(imgIds))])[0]
 
 # load and display image
@@ -41,9 +41,9 @@ image = io.imread('%s/%s/%s'%(dataDir, dataType, img['file_name']))
 # print("test of various reading methods", image == image_another)
 # use url to load image
 # image = io.imread(img['coco_url'])
-print("skimage.io.imread datatype: ", type(image))
-print(image.shape)
-io.imsave('../figs_demo/basic_original.png', image)
+# print("skimage.io.imread datatype: ", type(image))
+# print(image.shape)
+io.imsave('../figs_demo/' + img['file_name'][6:12] + '_original.png', image)
 
 # load and display instance annotations
 annIds = coco.getAnnIds(imgIds=img['id'], catIds=catIds, iscrowd=None)
@@ -59,4 +59,4 @@ anns = coco.loadAnns(annIds)
 mask = coco.polygon_extract(anns, image.shape[0], image.shape[1])
 for ch in range(3):
     image[:, :, ch] *= mask
-io.imsave('../figs_demo/basic_masked.png', image)
+io.imsave('../figs_demo/' + img['file_name'][6:12] + '_masked.png', image)
