@@ -27,11 +27,11 @@ nms = set([cat['supercategory'] for cat in cats])
 print('COCO super categories: \n{}'.format(' '.join(nms)))
 
 # get all images containing given categories, select one at random
-catIds = coco.getCatIds(catNms=['dog'])
+catIds = coco.getCatIds(catNms=['cat'])
 print('catIDS:', catIds)
 imgIds = coco.getImgIds(catIds=catIds)
 print('imgIDS:', imgIds)
-imgIds = coco.getImgIds(imgIds=[549220])
+imgIds = coco.getImgIds(imgIds=[416256])
 print('imgIDS:', imgIds)
 img = coco.loadImgs(imgIds[np.random.randint(0, len(imgIds))])[0]
 
