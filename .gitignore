@@ -16,7 +16,7 @@ PythonAPI/pycocotools/mask.pyc
 
 #added for API use test
 val2017/
-cityscape/
+figs/
 .ipynb_checkpoints/
 __pycache__/
 _mask.cpython-38-darwin.so
