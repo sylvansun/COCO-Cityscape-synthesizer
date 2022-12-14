@@ -20,7 +20,7 @@ def save_city_pair(index, image, label):
     io.imsave("../figs/zurich/image_syn/{}".format(name_dict["image"]), image)
     io.imsave("../figs/zurich/label_syn/{}".format(name_dict["label"]), label)
 
-def main(cats, num_each_cat=10, num_cityscape_img=100):
+def main(cats, num_each_cat=10, num_cityscape_img=100, ood_id=20):
     dataDir = '..'
     dataType = 'val2017'
     annFile = '{}/annotations/instances_{}.json'.format(dataDir, dataType)
@@ -45,24 +45,22 @@ def main(cats, num_each_cat=10, num_cityscape_img=100):
                 H,W = image.shape[0], image.shape[1]
                 mask_city = np.ones((1024,2048)).astype(np.uint8)
                 unmask = np.ones(mask.shape) - mask
-                mask_city[1024-H:1024,2048-W:2048] = unmask
                 
-                city,label = load_city_pair(cityscape_count)
+                Hpos,Wpos = np.random.randint(1024-200,1024),np.random.randint(800,2048)
+                mask_city[Hpos-H:Hpos,Wpos-W:Wpos] = unmask
                 
-                cityscape_count = (cityscape_count + 1) % num_cityscape_img
+                city,label = load_city_pair(cityscape_count % num_cityscape_img)
+                
+                cityscape_count += 1
                 img_count += 1
 
                 for ch in range(3):
                     image[:, :, ch] *= mask
                     city[:, :, ch] *= mask_city
                 label *= mask_city
-                city[1024-H:1024,2048-W:2048,:] += image
-                label[1024-H:1024,2048-W:2048] += (20*mask).astype(np.uint8)
-                save_city_pair(cityscape_count, city, label)
-                
-            
-    
-    
+                city[Hpos-H:Hpos,Wpos-W:Wpos,:] += image
+                label[Hpos-H:Hpos,Wpos-W:Wpos] += (ood_id * mask).astype(np.uint8)
+                save_city_pair(cityscape_count, city, label)    
     
 if __name__ == "__main__":
     category = load_category("./utils/category.json")
