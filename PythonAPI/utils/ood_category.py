@@ -12,8 +12,8 @@ def save_category(cat):
     file = open("category.json", "w")
     file.write(json.dumps(cat))
     
-def load_category():
-    file = open("category.json", "r")
+def load_category(filename="category.json"):
+    file = open(filename, "r")
     return json.loads(file.read())
 
 if __name__ == "__main__":
