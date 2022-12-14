@@ -15,18 +15,24 @@ def load_city_pair(index):
     label = io.imread("../figs/zurich/label/{}".format(name_dict["label"]))
     return image,label
 
-def main(cats, num_each_cat=10):
+def save_city_pair(index, image, label):
+    name_dict = get_city_filename(index)
+    io.imsave("../figs/zurich/image_syn/{}".format(name_dict["image"]), image)
+    io.imsave("../figs/zurich/label_syn/{}".format(name_dict["label"]), label)
+
+def main(cats, num_each_cat=10, num_cityscape_img=100):
     dataDir = '..'
     dataType = 'val2017'
     annFile = '{}/annotations/instances_{}.json'.format(dataDir, dataType)
 
     coco = COCO(annFile)
+    cityscape_count = 0
     for cat in cats:
         print(cat)
         catIds = coco.getCatIds(catNms=[cat])
         imgIds = coco.getImgIds(catIds=catIds)
         img_count = idx = 0
-        while img_count < 10:
+        while img_count < num_each_cat:
             img = coco.loadImgs(imgIds[idx])[0]
             idx += 1
             image = io.imread('%s/%s/%s' % (dataDir, dataType, img['file_name']))
@@ -36,11 +42,24 @@ def main(cats, num_each_cat=10):
             if mask is None:
                 continue
             else:
+                H,W = image.shape[0], image.shape[1]
+                mask_city = np.ones((1024,2048)).astype(np.uint8)
+                unmask = np.ones(mask.shape) - mask
+                mask_city[1024-H:1024,2048-W:2048] = unmask
+                
+                city,label = load_city_pair(cityscape_count)
+                
+                cityscape_count = (cityscape_count + 1) % num_cityscape_img
                 img_count += 1
-                io.imsave('../figs/coco/' + img['file_name'][6:12] + cat + '_orig.png', image)
+
                 for ch in range(3):
                     image[:, :, ch] *= mask
-                io.imsave('../figs/coco/' + img['file_name'][6:12] + cat + '_mask.png', image)
+                    city[:, :, ch] *= mask_city
+                label *= mask_city
+                city[1024-H:1024,2048-W:2048,:] += image
+                label[1024-H:1024,2048-W:2048] += (20*mask).astype(np.uint8)
+                save_city_pair(cityscape_count, city, label)
+                
             
     
     
@@ -48,3 +67,4 @@ def main(cats, num_each_cat=10):
 if __name__ == "__main__":
     category = load_category("./utils/category.json")
     main(category)
+    
