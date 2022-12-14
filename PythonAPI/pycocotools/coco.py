@@ -338,9 +338,11 @@ class COCO:
                             color.append(c)
                     else:
                         # mask
-                        raise Exception('target object is not a polygon')
+                        return None
+                        # raise Exception('target object is not a polygon')
                 if 'keypoints' in ann and type(ann['keypoints']) == list:
-                    raise Exception('keypoints method not supported')
+                    return None
+                    # raise Exception('keypoints method not supported')
 
                 if draw_bbox:
                     [bbox_x, bbox_y, bbox_w, bbox_h] = ann['bbox']
