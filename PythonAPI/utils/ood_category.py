@@ -18,7 +18,7 @@ def load_category(filename="category.json"):
 
 if __name__ == "__main__":
     
-    category = ["boat", "bird", "cat", "dog", "horse",\
+    category = ["pizza", "apple", "cat", "dog", "horse",\
                 "sheep", "cow", "elephant", "bear", "zebra",\
                 "giraffe", "surfboard", "fork", "knife", "spoon",\
                 "banana", "keyboard", "microwave", "oven", "cake"]
