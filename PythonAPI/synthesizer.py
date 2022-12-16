@@ -57,7 +57,7 @@ def main(cats, num_each_cat=10, num_cityscape_img=100, ood_id=254, crop_size=480
                 mask_city = np.ones((1024,2048)).astype(np.uint8)
                 unmask = np.ones(mask.shape) - mask
                 
-                Hpos, Wpos = np.random.randint(970,1024), np.random.randint(1000,2048)
+                Hpos, Wpos = np.random.randint(970-240,1024-240), np.random.randint(1000-240,2048-240)
                 mask_city[Hpos-H:Hpos,Wpos-W:Wpos] = unmask
                 
                 city,label = load_city_pair(cityscape_count % num_cityscape_img)
@@ -73,6 +73,8 @@ def main(cats, num_each_cat=10, num_cityscape_img=100, ood_id=254, crop_size=480
                 label[Hpos-H:Hpos,Wpos-W:Wpos] += (ood_id * mask).astype(np.uint8)
                 save_city_pair(cityscape_count, city, label)
                 cutted_img_labels = []
+                Hpos += 240
+                Wpos += 240
                 cutted_img_labels.append((city[Hpos-720:Hpos-240,Wpos-720:Wpos-240,:], label[Hpos-720:Hpos-240,Wpos-720:Wpos-240]))
                 cutted_img_labels.append((city[Hpos-2*crop_size:Hpos-crop_size,Wpos-2*crop_size:Wpos-crop_size,:], label[Hpos-2*crop_size:Hpos-crop_size,Wpos-2*crop_size:Wpos-crop_size]))
                 cutted_img_labels.append((city[Hpos-2*crop_size:Hpos-crop_size,Wpos-crop_size:Wpos,:], label[Hpos-2*crop_size:Hpos-crop_size,Wpos-crop_size:Wpos]))
